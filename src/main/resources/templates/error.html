@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Erro - PediuPatrão</title>
+    <link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+    <div class="card card-outline card-warning">
+        <div class="card-body text-center">
+            <h1 class="h3" th:text="${status} + ' - Erro'">Erro</h1>
+            <p th:if="${status == 404}">Página não encontrada.</p>
+            <p th:if="${status == 403}">Acesso negado.</p>
+            <p th:unless="${status == 404 or status == 403}">Não foi possível processar a solicitação.</p>
+            <a th:href="@{/}" class="btn btn-primary">Voltar ao início</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

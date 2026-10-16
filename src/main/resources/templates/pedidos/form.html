@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head><title>Pedido</title></head>
+<body>
+<h1 class="h4 mb-0" layout:fragment="titulo" th:text="${pedidoId == null} ? 'Registrar pedido' : 'Alterar pedido'">Pedido</h1>
+<section layout:fragment="content">
+    <div class="alert alert-info" th:if="${#lists.isEmpty(clientes)}">
+        Nenhum cliente cadastrado. Cadastre o cliente antes de registrar o pedido.
+    </div>
+    <div class="card card-form">
+        <div class="card-body">
+            <form th:action="${pedidoId == null} ? @{/pedidos/salvar} : @{/pedidos/{id}/editar(id=${pedidoId})}"
+                  th:object="${pedido}" method="post" id="form-pedido">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="clienteId">Cliente</label>
+                        <select id="clienteId" th:field="*{clienteId}" class="form-control" required>
+                            <option value="">Selecione...</option>
+                            <option th:each="c : ${clientes}" th:value="${c.id}" th:text="${c.nome + ' - ' + c.telefone}">cliente</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="tipoEntrega">Forma de entrega</label>
+                        <select id="tipoEntrega" th:field="*{tipoEntrega}" class="form-control" required>
+                            <option value="">Selecione...</option>
+                            <option th:each="t : ${tiposEntrega}" th:value="${t}" th:text="${t.descricao}">tipo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h2 class="h6 mt-2">Itens</h2>
+                <p class="text-muted small mb-2">Os preços são obtidos do cadastro de produtos e o total é calculado no servidor.</p>
+                <table class="table table-sm">
+                    <thead><tr><th>Produto</th><th>Quantidade</th><th></th></tr></thead>
+                    <tbody id="itens">
+                    <tr class="linha-item" th:each="item, st : *{itens}">
+                        <td>
+                            <select class="form-control campo-produto" th:name="|itens[${st.index}].produtoId|" required>
+                                <option value="">Selecione...</option>
+                                <option th:each="pr : ${produtos}" th:value="${pr.id}"
+                                        th:selected="${pr.id == item.produtoId}"
+                                        th:text="${pr.nome + ' - R$ ' + #numbers.formatDecimal(pr.preco, 1, 'POINT', 2, 'COMMA')}">produto</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" min="1" max="50" class="form-control campo-quantidade"
+                                   th:name="|itens[${st.index}].quantidade|" th:value="${item.quantidade}" required>
+                        </td>
+                        <td><button type="button" class="btn btn-sm btn-outline-danger remover-item">✕</button></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <button type="button" class="btn btn-sm btn-outline-secondary mb-3" id="adicionar-item">+ Adicionar item</button>
+
+                <div class="form-group">
+                    <label for="observacao">Observação</label>
+                    <textarea id="observacao" th:field="*{observacao}" class="form-control" maxlength="300" rows="2"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <a th:href="${pedidoId == null} ? @{/pedidos} : @{/pedidos/{id}(id=${pedidoId})}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</section>
+<th:block layout:fragment="scripts">
+<script>
+    (function () {
+        const corpo = document.getElementById('itens');
+
+        function renumerar() {
+            corpo.querySelectorAll('.linha-item').forEach(function (linha, i) {
+                linha.querySelector('.campo-produto').name = 'itens[' + i + '].produtoId';
+                linha.querySelector('.campo-quantidade').name = 'itens[' + i + '].quantidade';
+            });
+        }
+
+        document.getElementById('adicionar-item').addEventListener('click', function () {
+            const modelo = corpo.querySelector('.linha-item');
+            const nova = modelo.cloneNode(true);
+            nova.querySelector('.campo-produto').value = '';
+            nova.querySelector('.campo-quantidade').value = 1;
+            corpo.appendChild(nova);
+            renumerar();
+        });
+
+        corpo.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remover-item') && corpo.querySelectorAll('.linha-item').length > 1) {
+                e.target.closest('.linha-item').remove();
+                renumerar();
+            }
+        });
+    })();
+</script>
+</th:block>
+</body>
+</html>

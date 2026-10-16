@@ -1,0 +1,64 @@
+/* Layout: menu lateral + conteúdo */
+body {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f4f6f9;
+}
+
+#sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background-color: #343a40;
+    padding: 15px 0;
+}
+
+#sidebar .logo {
+    display: block;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 0 20px 15px;
+}
+
+#sidebar a {
+    color: #ddd;
+    display: block;
+    padding: 8px 20px;
+    text-decoration: none;
+}
+
+#sidebar a:hover {
+    background-color: #495057;
+    color: white;
+}
+
+#content {
+    flex-grow: 1;
+    min-width: 0;
+    padding: 20px;
+}
+
+/* Largura máxima dos formulários */
+.card-form {
+    max-width: 750px;
+}
+
+/* Cores dos status do pedido */
+.status-RECEBIDO { background-color: #6c757d; color: white; }
+.status-EM_PREPARACAO { background-color: #fd7e14; color: white; }
+.status-PRONTO { background-color: #17a2b8; color: white; }
+.status-SAIU_PARA_ENTREGA { background-color: #007bff; color: white; }
+.status-RETIRADO { background-color: #007bff; color: white; }
+.status-FINALIZADO { background-color: #28a745; color: white; }
+.status-CANCELADO { background-color: #dc3545; color: white; }
+
+/* Em telas pequenas o menu fica em cima do conteúdo */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    #sidebar {
+        width: 100%;
+    }
+}

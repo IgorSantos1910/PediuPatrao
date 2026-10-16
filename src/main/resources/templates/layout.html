@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title layout:title-pattern="$CONTENT_TITLE - PediuPatrão">PediuPatrão</title>
+    <link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav id="sidebar">
+    <a class="logo" th:href="@{/}">PediuPatrão</a>
+    <ul class="nav flex-column">
+        <li class="nav-item"><a class="nav-link" th:href="@{/}">Início</a></li>
+
+        <li class="nav-item" sec:authorize="hasAnyRole('ADMIN','GERENTE','ATENDENTE')">
+            <a class="nav-link" th:href="@{/pedidos}">Pedidos</a>
+        </li>
+        <li class="nav-item" sec:authorize="hasAnyRole('GERENTE','ATENDENTE')">
+            <a class="nav-link" th:href="@{/pedidos/novo}">Registrar pedido</a>
+        </li>
+        <li class="nav-item" sec:authorize="hasAnyRole('GERENTE','ATENDENTE')">
+            <a class="nav-link" th:href="@{/clientes}">Clientes</a>
+        </li>
+        <li class="nav-item" sec:authorize="isAuthenticated()">
+            <a class="nav-link" th:href="@{/produtos}">Produtos</a>
+        </li>
+
+        <li class="nav-item" sec:authorize="hasAnyRole('ADMIN','GERENTE')">
+            <a class="nav-link" th:href="@{/auditoria}">Auditoria</a>
+        </li>
+        <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+            <a class="nav-link" th:href="@{/usuarios}">Usuários e perfis</a>
+        </li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/configuracoes}">Minha conta</a></li>
+    </ul>
+</nav>
+
+<main id="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0" layout:fragment="titulo">PediuPatrão</h1>
+        <div sec:authorize="isAuthenticated()">
+            <span class="mr-2">
+                <strong sec:authentication="name">usuario</strong>
+                <span class="badge badge-dark" sec:authorize="hasRole('ADMIN')">ADMIN</span>
+                <span class="badge badge-primary" sec:authorize="hasRole('GERENTE')">GERENTE</span>
+                <span class="badge badge-info" sec:authorize="hasRole('ATENDENTE')">ATENDENTE</span>
+            </span>
+            <!-- Logout via POST com token CSRF (incluído automaticamente pelo th:action) -->
+            <form th:action="@{/logout}" method="post" class="d-inline">
+                <button type="submit" class="btn btn-sm btn-outline-secondary">Sair</button>
+            </form>
+        </div>
+    </div>
+
+    <div th:if="${sucesso}" class="alert alert-success" th:text="${sucesso}">Sucesso</div>
+    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}">Erro</div>
+
+    <section layout:fragment="content"></section>
+</main>
+<th:block layout:fragment="scripts"></th:block>
+</body>
+</html>

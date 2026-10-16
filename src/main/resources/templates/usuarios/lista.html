@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head><title>Usuários</title></head>
+<body>
+<h1 class="h4 mb-0" layout:fragment="titulo">Usuários e perfis</h1>
+<section layout:fragment="content">
+    <a th:href="@{/usuarios/novo}" class="btn btn-primary mb-3">Novo usuário</a>
+    <div class="card">
+        <div class="card-body p-0 table-responsive">
+            <table class="table table-striped mb-0">
+                <thead><tr><th>Login</th><th>Perfil</th><th class="text-right">Ações</th></tr></thead>
+                <tbody>
+                <tr th:each="u : ${usuarios}">
+                    <td th:text="${u.username}">login</td>
+                    <td>
+                        <span th:if="${u.perfil != null}" class="badge badge-secondary" th:text="${u.perfil}">perfil</span>
+                        <span th:if="${u.perfil == null}" class="badge badge-warning">sem perfil</span>
+                    </td>
+                    <td class="text-right">
+                        <a th:href="@{/usuarios/editar/{id}(id=${u.id})}" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <form th:action="@{/usuarios/deletar/{id}(id=${u.id})}" method="post" class="d-inline"
+                              onsubmit="return confirm('Excluir este usuário?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>

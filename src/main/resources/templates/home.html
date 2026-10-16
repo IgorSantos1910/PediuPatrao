@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head><title>Início</title></head>
+<body>
+<h1 class="h4 mb-0" layout:fragment="titulo">Início</h1>
+<section layout:fragment="content">
+    <div class="alert alert-warning" sec:authorize="!hasAnyRole('ADMIN','GERENTE','ATENDENTE')">
+        Seu usuário ainda não possui perfil atribuído. Solicite a um administrador.
+    </div>
+
+    <div class="row" th:if="${contagem}">
+        <div class="col-6 col-md-3 mb-3" th:each="entrada : ${contagem}">
+            <a th:href="@{/pedidos(status=${entrada.key})}" class="text-decoration-none">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <span class="badge" th:classappend="${'status-' + entrada.key}"
+                              th:text="${entrada.key.descricao}">Status</span>
+                        <div class="h3 mt-2 mb-0 text-dark" th:text="${entrada.value}">0</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h2 class="h6">O que o seu perfil pode fazer</h2>
+            <ul class="mb-0">
+                <li sec:authorize="hasRole('ADMIN')">Administrar usuários e perfis, consultar pedidos e visualizar a auditoria.</li>
+                <li sec:authorize="hasRole('GERENTE')">Gerenciar pedidos, aplicar descontos (até 20%), cancelar pedidos, consultar clientes e visualizar a auditoria.</li>
+                <li sec:authorize="hasRole('ATENDENTE')">Cadastrar e atualizar clientes, registrar pedidos e acompanhar o andamento.</li>
+            </ul>
+        </div>
+    </div>
+</section>
+</body>
+</html>

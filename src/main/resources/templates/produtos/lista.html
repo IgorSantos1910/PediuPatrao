@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head><title>Produtos</title></head>
+<body>
+<h1 class="h4 mb-0" layout:fragment="titulo">Produtos</h1>
+<section layout:fragment="content">
+    <a sec:authorize="hasRole('GERENTE')" th:href="@{/produtos/novo}" class="btn btn-primary mb-3">Novo produto</a>
+    <div class="card">
+        <div class="card-body p-0 table-responsive">
+            <table class="table table-striped mb-0">
+                <thead><tr><th>Nome</th><th>Tipo</th><th>Preço</th><th>Situação</th><th class="text-right" sec:authorize="hasRole('GERENTE')">Ações</th></tr></thead>
+                <tbody>
+                <tr th:each="p : ${produtos}">
+                    <td th:text="${p.nome}">nome</td>
+                    <td th:text="${p.tipo}">tipo</td>
+                    <td th:text="${p.preco != null} ? 'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')} : '-'">preço</td>
+                    <td><span th:text="${p.ativo == false} ? 'Inativo' : 'Ativo'">Ativo</span></td>
+                    <td class="text-right" sec:authorize="hasRole('GERENTE')">
+                        <a th:href="@{/produtos/editar/{id}(id=${p.id})}" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <form th:action="@{/produtos/{id}/excluir(id=${p.id})}" method="post" class="d-inline"
+                              onsubmit="return confirm('Excluir este produto?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>

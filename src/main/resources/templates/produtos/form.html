@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head><title>Produto</title></head>
+<body>
+<h1 class="h4 mb-0" layout:fragment="titulo" th:text="${produto.id == null} ? 'Novo produto' : 'Editar produto'">Produto</h1>
+<section layout:fragment="content">
+    <div class="card card-form">
+        <div class="card-body">
+            <form th:action="@{/produtos/salvar}" th:object="${produto}" method="post">
+                <input type="hidden" th:field="*{id}">
+                <div class="form-group">
+                    <label for="nome">Nome</label>
+                    <input id="nome" type="text" th:field="*{nome}" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="tipo">Tipo</label>
+                    <select id="tipo" th:field="*{tipo}" class="form-control">
+                        <option value="Pizza">Pizza</option>
+                        <option value="Esfiha">Esfiha</option>
+                        <option value="Bebida">Bebida</option>
+                        <option value="Lanche">Lanche</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="preco">Preço (R$)</label>
+                    <input id="preco" type="number" step="0.01" min="0.01" th:field="*{preco}" class="form-control" required>
+                </div>
+                <div class="form-check mb-3">
+                    <input id="ativo" type="checkbox" th:field="*{ativo}" class="form-check-input">
+                    <label for="ativo" class="form-check-label">Ativo</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <a th:href="@{/produtos}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head><title>Pedidos</title></head>
+<body>
+<h1 class="h4 mb-0" layout:fragment="titulo">Pedidos</h1>
+<section layout:fragment="content">
+    <div class="d-flex mb-3">
+        <a sec:authorize="hasAnyRole('GERENTE','ATENDENTE')" th:href="@{/pedidos/novo}" class="btn btn-primary mr-2">Registrar pedido</a>
+        <form th:action="@{/pedidos}" method="get" class="form-inline">
+            <select name="status" class="form-control mr-2" onchange="this.form.submit()">
+                <option value="">Todos os status</option>
+                <option th:each="s : ${todosStatus}" th:value="${s}" th:text="${s.descricao}"
+                        th:selected="${s == statusFiltro}">status</option>
+            </select>
+        </form>
+    </div>
+    <div class="card">
+        <div class="card-body p-0 table-responsive">
+            <table class="table table-striped table-hover mb-0">
+                <thead>
+                <tr><th>Entrada</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Status</th><th>Registrado por</th><th></th></tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(pedidos)}"><td colspan="7" class="text-muted">Nenhum pedido encontrado.</td></tr>
+                <tr th:each="p : ${pedidos}">
+                    <td th:text="${p.dataHoraEntrada != null} ? ${#temporals.format(p.dataHoraEntrada, 'dd/MM/yyyy HH:mm')} : '-'">data</td>
+                    <td th:text="${p.clienteNome}">cliente</td>
+                    <td th:text="${#lists.size(p.itens)} + ' item(ns)'">itens</td>
+                    <td th:text="'R$ ' + ${#numbers.formatDecimal(p.valorTotal, 1, 'POINT', 2, 'COMMA')}">total</td>
+                    <td><span class="badge" th:classappend="${'status-' + p.status}" th:text="${p.status.descricao}">status</span></td>
+                    <td th:text="${p.responsavelEntrada}">usuario</td>
+                    <td class="text-right"><a th:href="@{/pedidos/{id}(id=${p.id})}" class="btn btn-sm btn-outline-primary">Abrir</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>

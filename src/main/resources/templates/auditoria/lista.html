@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head><title>Auditoria</title></head>
+<body>
+<h1 class="h4 mb-0" layout:fragment="titulo">Auditoria</h1>
+<section layout:fragment="content">
+    <form th:action="@{/auditoria}" method="get" th:object="${filtro}" class="card card-body mb-3">
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="entidade">Entidade</label>
+                <select id="entidade" th:field="*{entidade}" class="form-control">
+                    <option value="">Todas</option>
+                    <option value="Pedido">Pedido</option>
+                    <option value="Cliente">Cliente</option>
+                    <option value="Produto">Produto</option>
+                    <option value="Usuario">Usuário</option>
+                </select>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="operacao">Operação</label>
+                <select id="operacao" th:field="*{operacao}" class="form-control">
+                    <option value="">Todas</option>
+                    <option th:each="o : ${operacoes}" th:value="${o}" th:text="${o.descricao}">op</option>
+                </select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="usuario">Usuário</label>
+                <input id="usuario" type="text" th:field="*{usuario}" class="form-control">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="entidadeId">Identificador</label>
+                <input id="entidadeId" type="text" th:field="*{entidadeId}" class="form-control">
+            </div>
+            <div class="form-group col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary btn-block">Filtrar</button>
+            </div>
+        </div>
+        <small class="text-muted">Registros somente leitura (não há alteração nem exclusão). Credenciais nunca são registradas.
+            <span sec:authorize="hasRole('ADMIN')">Para o perfil ADMIN, telefones e endereços são exibidos mascarados.</span></small>
+    </form>
+
+    <div class="card">
+        <div class="card-body p-0 table-responsive">
+            <table class="table table-sm table-striped mb-0">
+                <thead>
+                <tr><th>Data/hora</th><th>Usuário (perfil)</th><th>Operação</th><th>Entidade / ID</th><th>Campo</th><th>Valor anterior</th><th>Novo valor</th><th>Justificativa</th></tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(registros)}"><td colspan="8" class="text-muted">Nenhum registro encontrado.</td></tr>
+                <th:block th:each="r : ${registros}">
+                    <tr th:if="${#lists.isEmpty(r.alteracoes)}">
+                        <td th:text="${#temporals.format(r.dataHora, 'dd/MM/yyyy HH:mm:ss')}"></td>
+                        <td th:text="${r.usuario + ' (' + r.perfil + ')'}"></td>
+                        <td th:text="${r.operacao.descricao}"></td>
+                        <td><span th:text="${r.entidade}"></span><br><small class="text-muted" th:text="${r.entidadeId}"></small></td>
+                        <td colspan="3" th:text="${r.descricao}"></td>
+                        <td th:text="${r.justificativa}"></td>
+                    </tr>
+                    <tr th:each="c, st : ${r.alteracoes}">
+                        <td th:text="${st.first} ? ${#temporals.format(r.dataHora, 'dd/MM/yyyy HH:mm:ss')} : ''"></td>
+                        <td th:text="${st.first} ? ${r.usuario + ' (' + r.perfil + ')'} : ''"></td>
+                        <td th:text="${st.first} ? ${r.operacao.descricao} : ''"></td>
+                        <td>
+                            <th:block th:if="${st.first}">
+                                <a th:if="${r.entidade == 'Pedido'}" th:href="@{/pedidos/{id}(id=${r.entidadeId})}" th:text="${r.entidade}"></a>
+                                <span th:unless="${r.entidade == 'Pedido'}" th:text="${r.entidade}"></span>
+                                <br><small class="text-muted" th:text="${r.entidadeId}"></small>
+                            </th:block>
+                        </td>
+                        <td th:text="${c.campo}"></td>
+                        <td th:text="${c.valorAnterior}"></td>
+                        <td th:text="${c.valorNovo}"></td>
+                        <td th:text="${st.first} ? ${r.justificativa} : ''"></td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>

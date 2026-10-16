@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head><title>Clientes</title></head>
+<body>
+<h1 class="h4 mb-0" layout:fragment="titulo">Clientes</h1>
+<section layout:fragment="content">
+    <a sec:authorize="hasRole('ATENDENTE')" th:href="@{/clientes/novo}" class="btn btn-primary mb-3">Novo cliente</a>
+    <div class="card">
+        <div class="card-body p-0 table-responsive">
+            <table class="table table-striped mb-0">
+                <thead><tr><th>Nome</th><th>Telefone</th><th>Endereço</th><th class="text-right">Ações</th></tr></thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(clientes)}"><td colspan="4" class="text-muted">Nenhum cliente cadastrado.</td></tr>
+                <tr th:each="c : ${clientes}">
+                    <td th:text="${c.nome}">nome</td>
+                    <td th:text="${c.telefone}">telefone</td>
+                    <td>
+                        <span th:if="${c.logradouro}" th:text="${c.logradouro + ', ' + (c.numero ?: 's/n') + ' - ' + (c.bairro ?: '') + ' ' + (c.cidade ?: '') + '/' + (c.estado ?: '')}">endereço</span>
+                        <span th:unless="${c.logradouro}" th:text="${c.endereco}">endereço</span>
+                    </td>
+                    <td class="text-right">
+                        <a sec:authorize="hasRole('ATENDENTE')" th:href="@{/clientes/editar/{id}(id=${c.id})}" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a sec:authorize="hasRole('GERENTE')" th:href="@{/auditoria(entidade='Cliente',entidadeId=${c.id})}" class="btn btn-sm btn-outline-secondary">Auditoria</a>
+                        <form sec:authorize="hasRole('GERENTE')" th:action="@{/clientes/{id}/excluir(id=${c.id})}" method="post" class="d-inline"
+                              onsubmit="return confirm('Excluir este cliente?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head><title>Minha conta</title></head>
+<body>
+<h1 class="h4 mb-0" layout:fragment="titulo">Minha conta</h1>
+<section layout:fragment="content">
+    <div class="card card-form">
+        <div class="card-body">
+            <p><strong>Usuário:</strong> <span sec:authentication="name">usuario</span></p>
+            <p><strong>Perfil:</strong> <span th:text="${perfil}">perfil</span></p>
+            <p class="text-muted mb-0">Perfis são atribuídos exclusivamente por um administrador.
+                Nenhum usuário pode alterar o próprio perfil.</p>
+        </div>
+    </div>
+</section>
+</body>
+</html>
