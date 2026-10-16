@@ -221,6 +221,9 @@ public class PedidoService {
             if (Boolean.FALSE.equals(produto.getAtivo())) {
                 throw new RegraNegocioException("O produto " + produto.getNome() + " está inativo.");
             }
+            if (produto.getPreco() == null) {
+                throw new RegraNegocioException("O produto " + produto.getNome() + " está sem preço.");
+            }
             itens.add(new ItemPedido(produto.getId(), produto.getNome(), req.getQuantidade(),
                     BigDecimal.valueOf(produto.getPreco())));
         }

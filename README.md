@@ -23,6 +23,8 @@ Pra subir o sistema:
 mvnw spring-boot:run
 ```
 
+(no Linux ou Mac é `./mvnw spring-boot:run`)
+
 Depois abre o navegador em http://localhost:8080
 
 Pra rodar os testes:
@@ -120,4 +122,6 @@ Os testes ficam em `src/test`:
 - `StatusPedidoTest`: testa a ordem dos status.
 - `PedidoServiceTest`: testa o cálculo do total, a troca de status, o desconto e o cancelamento.
 - `AuditoriaServiceTest`: testa a comparação do antes e depois e o mascaramento.
+- `ClienteServiceTest`: testa se a mudança de endereço e telefone vai pra auditoria com o valor antigo e o novo.
+- `UsuarioServiceTest`: testa as travas dos perfis (não mudar o próprio perfil, não rebaixar o último admin, perfil inválido) e se a senha não vai pra auditoria.
 - `SegurancaTest`: testa se as tentativas de acesso sem permissão são bloqueadas, tanto na API quanto nas telas.
